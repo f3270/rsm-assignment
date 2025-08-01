@@ -1,0 +1,30 @@
+```mermaid
+graph TD
+    subgraph RAG Microservice
+        FastAPI["FastAPI API"]
+        Ingest["/ingest Endpoint"]
+        Query["/query Endpoint"]
+        Health["/health Endpoint"]
+        Langfuse["Langfuse Observability"]
+    end
+
+    subgraph Storage Layer
+        Chroma["ChromaDB (Vector Store)"]
+    end
+
+    subgraph External Services
+        OpenAI["OpenAI LLM API"]
+        Documents["External Documents (ThinkPython, PEP8)"]
+    end
+
+    %% Connections
+    Documents -->|Load & Chunk| Ingest
+    Ingest -->|Store embeddings| Chroma
+    Query -->|Retrieve embeddings| Chroma
+    Query -->|Generate Answer| OpenAI
+    FastAPI -->|Instrument Spans, Metrics| Langfuse
+    FastAPI --> Health
+
+    %% User interaction
+    User["User/API Client"] -->|HTTP Requests| FastAPI
+```
