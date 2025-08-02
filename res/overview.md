@@ -3,16 +3,24 @@
 + Fast-API
     + [x] endpoints
     + [x] schemas
+    + local  -> http://127.0.0.1:8000
+    + docker -> http://0.0.0.0:8000
+
 + Docker
     + [x] build
     + [x] run
-+ Docker-Compose
+
 + Langfuse
+    + http://localhost:3000/auth/sign-in
+
++ Docker-Compose
+
 + Ingest
     + [ ] filetypes: pdf | text | html | markdown
     + [ ] chunks
     + [ ] embeddings
     + [ ] vector db
+
 + LLM Query
 
 ---
