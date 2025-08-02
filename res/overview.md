@@ -11,9 +11,9 @@
     + [x] run
 
 + Langfuse
-    + http://0.0.0.0:3000/auth/sign-in
+    + [x] http://0.0.0.0:3000/auth/sign-in
 
-+ Docker-Compose
++ [x] Docker-Compose
 
 + Ingest
     + [ ] filetypes: pdf | text | html | markdown
