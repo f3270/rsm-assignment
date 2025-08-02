@@ -1,11 +1,7 @@
 FROM python:3.11-slim
 
 # Instala dependencias del sistema (ajusta según tus libs: pdf, html, etc.)
-RUN apt-get update && apt-get install -y \
-    curl \
-    gcc \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y 
 
 # Crea el directorio de trabajo
 WORKDIR /app
