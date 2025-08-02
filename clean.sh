@@ -1,1 +1,1 @@
-utils/clean.sh
+util/clean.sh

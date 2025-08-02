@@ -1,3 +1,22 @@
+# RAG MICROSERVICE
+
++ Fast-API
+    + [x] endpoints
+    + [x] schemas
++ Docker
+    + [x] build
+    + [x] run
++ Docker-Compose
++ Langfuse
++ Ingest
+    + [ ] filetypes: pdf | text | html | markdown
+    + [ ] chunks
+    + [ ] embeddings
+    + [ ] vector db
++ LLM Query
+
+---
+
 ```mermaid
 graph TD
     subgraph RAG Microservice
