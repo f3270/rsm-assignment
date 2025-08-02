@@ -4,14 +4,14 @@
     + [x] endpoints
     + [x] schemas
     + local  -> http://127.0.0.1:8000
-    + docker -> http://0.0.0.0:8000
+    + docker -> http://0.0.0.0:8000/docs
 
 + Docker
     + [x] build
     + [x] run
 
 + Langfuse
-    + http://localhost:3000/auth/sign-in
+    + http://0.0.0.0:3000/auth/sign-in
 
 + Docker-Compose
 

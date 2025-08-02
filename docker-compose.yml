@@ -158,6 +158,20 @@ services:
     volumes:
       - langfuse_postgres_data:/var/lib/postgresql/data
 
+  rag-api:      
+      build:
+        context: ./rag_microservice
+        dockerfile: Dockerfile
+      ports:
+        - "8000:8000"
+      environment:
+        - OPENAI_API_KEY=${OPENAI_API_KEY}
+        - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+        - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+        - LANGFUSE_HOST=http://studio:3000
+      depends_on:
+        - langfuse-web
+
 volumes:
   langfuse_postgres_data:
     driver: local
