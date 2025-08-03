@@ -51,6 +51,8 @@ LANGFUSE_PUBLIC_KEY=pk-lf-your_public_key
 LANGFUSE_SECRET_KEY=sk-lf-your_secret_key
 ```
 
+To generate Langfuse API Keys, first you must create an account, organization and project on the Langfuse app (http://0.0.0.0:3000/auth/sign-in) after the first build.
+
 ### Docker Environment Variables
 
 The `docker-compose.yml` file contains all necessary environment variables for the containerized setup. Key variables include:
@@ -61,8 +63,6 @@ The `docker-compose.yml` file contains all necessary environment variables for t
 
 ## Building and Running
 
-### Option 1: Full System (Recommended)
-
 Build and start all services including Langfuse and RAG microservice:
 
 ```bash
@@ -72,6 +72,12 @@ Build and start all services including Langfuse and RAG microservice:
 # Alternative command
 docker compose up --build
 ```
+
+After building you can access all the app services on these links:
+
++ RAG API:      http://0.0.0.0:8000
++ RAG API docs: http://0.0.0.0:8000/docs
++ Langfuse:     http://0.0.0.0:3000/auth/sign-in
 
 ## Service Endpoints
 
