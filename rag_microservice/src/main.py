@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Literal, Union
 
 from fastapi import FastAPI
@@ -53,12 +54,14 @@ async def ingest_document(request: IngestRequest):
     """Ingest documents from URL or direct text"""
     try:
         if request.source_type == "url":
+            source_id = f"url_{str(request.content)}"
             processed_content, chunks_created = await process_url(
-                str(request.content), request.document_type
+                str(request.content), request.document_type, source_id
             )
         elif request.source_type == "text":
+            source_id = f"text_{str(uuid.uuid4())[:8]}"
             processed_content, chunks_created = process_text(
-                request.content, request.document_type
+                request.content, request.document_type, source_id
             )
         else:
             raise ValueError(f"Unsupported source_type: {request.source_type}")
