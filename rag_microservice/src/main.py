@@ -66,11 +66,18 @@ async def ingest_document(request: IngestRequest):
         else:
             raise ValueError(f"Unsupported source_type: {request.source_type}")
 
-        return IngestResponse(
-            status="success",
-            message="Document ingested successfully",
-            chunks_created=chunks_created,
-        )
+        if chunks_created == 0:
+            return IngestResponse(
+                status="duplicate",
+                message="Document already exists (duplicate detected)",
+                chunks_created=0,
+            )
+        else:
+            return IngestResponse(
+                status="success",
+                message="Document ingested successfully",
+                chunks_created=chunks_created,
+            )
     except Exception as e:
         return IngestResponse(
             status="error",

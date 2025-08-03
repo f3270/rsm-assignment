@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import os
 import tempfile
 
@@ -10,6 +11,33 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langfuse import observe
+
+
+def generate_content_hash(content: str, doc_type: str) -> str:
+    """Generate consistent hash for deduplication"""
+    # Normalize content (remove extra whitespace, lowercase for text types)
+    if doc_type in ["text", "html", "markdown"]:
+        normalized = ' '.join(content.strip().lower().split())
+    else:
+        normalized = content.strip()
+    
+    return hashlib.sha256(normalized.encode('utf-8')).hexdigest()[:16]  # 16 chars for brevity
+
+
+def check_for_duplicates(content_hash: str, persist_dir: str) -> bool:
+    """Check if document with this hash already exists"""
+    try:
+        # Load existing Chroma DB
+        embeddings = OpenAIEmbeddings()
+        db = Chroma(persist_directory=persist_dir, embedding_function=embeddings)
+        
+        # Search for existing document with this hash
+        results = db.get(where={"content_hash": content_hash})
+        
+        return len(results['documents']) > 0
+    except Exception:
+        # If DB doesn't exist yet or error, assume no duplicates
+        return False
 
 
 def _determine_page_for_chunk(chunk_text: str, page_info: list) -> int:
@@ -66,12 +94,20 @@ async def process_url(url: str, doc_type: str, source_id: str = None) -> tuple[s
     else:
         raise ValueError("Unsupported document_type for URL input")
 
+    # Generate content hash for deduplication
+    content_hash = generate_content_hash(content, doc_type)
+    persist_dir = os.getenv("CHROMA_DB_DIR", "./vector_store")
+    
+    # Check for duplicates before processing
+    if check_for_duplicates(content_hash, persist_dir):
+        return content, 0  # Return 0 chunks to indicate duplicate
+    
     # Generate source_id if not provided
     if source_id is None:
         source_id = url
     
     # Prepare metadata for vectorization
-    metadata = {"source": source_id}
+    metadata = {"source": source_id, "content_hash": content_hash}
     
     # Pass page information if available (for PDFs)
     page_info = locals().get('page_info', None)
@@ -93,13 +129,20 @@ def process_text(content: str, doc_type: str, source_id: str = None) -> tuple[st
     else:
         raise ValueError("Unsupported document_type for text input")
 
+    # Generate content hash for deduplication
+    content_hash = generate_content_hash(processed_content, doc_type)
+    persist_dir = os.getenv("CHROMA_DB_DIR", "./vector_store")
+    
+    # Check for duplicates before processing
+    if check_for_duplicates(content_hash, persist_dir):
+        return processed_content, 0  # Return 0 chunks to indicate duplicate
+    
     # Generate source_id if not provided
     if source_id is None:
-        import hashlib
-        source_id = f"text_{hashlib.md5(content.encode()).hexdigest()[:10]}"
+        source_id = f"text_{content_hash[:10]}"  # Use part of hash for source_id
     
     # Prepare metadata for vectorization
-    metadata = {"source": source_id}
+    metadata = {"source": source_id, "content_hash": content_hash}
     
     # For text input, we don't have page info, so pass None
     chunks_created = vectorize_text(processed_content, doc_type, metadata, None)
