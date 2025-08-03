@@ -3,6 +3,8 @@ from typing import List, Literal, Union
 from fastapi import FastAPI
 from pydantic import BaseModel, HttpUrl
 
+from ingest import process_text, process_url
+
 app = FastAPI()
 
 
@@ -46,21 +48,6 @@ def health_check():
     return {"status": "OK"}
 
 
-async def process_url(url: str, document_type: str) -> tuple[str, int]:
-    """Download and process content from URL"""
-    # TODO: Implement URL downloading and processing
-    # For now, return placeholder
-    return f"Processed content from {url}", 1
-
-
-async def process_text(content: str, document_type: str) -> tuple[str, int]:
-    """Process text content directly"""
-    # TODO: Implement text processing (chunking, embeddings)
-    # For now, return placeholder
-    chunks_created = len(content.split("\n\n"))  # Simple paragraph-based chunking
-    return content, chunks_created
-
-
 @app.post("/ingest", response_model=IngestResponse)
 async def ingest_document(request: IngestRequest):
     """Ingest documents from URL or direct text"""
@@ -70,7 +57,7 @@ async def ingest_document(request: IngestRequest):
                 str(request.content), request.document_type
             )
         elif request.source_type == "text":
-            processed_content, chunks_created = await process_text(
+            processed_content, chunks_created = process_text(
                 request.content, request.document_type
             )
         else:

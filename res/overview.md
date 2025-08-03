@@ -12,15 +12,18 @@
     + [x] build
     + [x] run
 
-+ Langfuse
-    + [x] http://0.0.0.0:3000/auth/sign-in
++ [x] Langfuse
+    + http://0.0.0.0:3000/auth/sign-in
 
 + [x] Docker-Compose
 
 + Ingest
-    + [ ] filetypes: pdf | text | html | markdown
-    + [ ] chunks
+    + [x] filetypes: pdf | text | html | markdown
+    + [x] chunks
     + [ ] embeddings
     + [ ] vector db
 
 + LLM Query
+
+
+<!-- EOF -->
