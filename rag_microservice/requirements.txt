@@ -47,6 +47,7 @@ langchain-chroma==0.2.5
 langchain-core==0.3.72
 langchain-openai==0.3.28
 langchain-text-splitters==0.3.9
+langfuse==3.2.1
 langsmith==0.4.10
 markdown==3.8.2
 markdown-it-py==3.0.0
@@ -59,14 +60,16 @@ oauthlib==3.3.1
 onnxruntime==1.22.1
 openai==1.98.0
 opentelemetry-api==1.36.0
+opentelemetry-exporter-otlp==1.36.0
 opentelemetry-exporter-otlp-proto-common==1.36.0
 opentelemetry-exporter-otlp-proto-grpc==1.36.0
+opentelemetry-exporter-otlp-proto-http==1.36.0
 opentelemetry-proto==1.36.0
 opentelemetry-sdk==1.36.0
 opentelemetry-semantic-conventions==0.57b0
 orjson==3.11.1
 overrides==7.7.0
-packaging==25.0
+packaging==24.2
 posthog==5.4.0
 protobuf==6.31.1
 pyasn1==0.6.1
@@ -113,5 +116,6 @@ uvloop==0.21.0
 watchfiles==1.1.0
 websocket-client==1.8.0
 websockets==15.0.1
+wrapt==1.17.2
 zipp==3.23.0
 zstandard==0.23.0

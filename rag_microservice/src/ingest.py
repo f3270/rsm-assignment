@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 import fitz
 import httpx
 import markdown
@@ -5,18 +8,28 @@ from bs4 import BeautifulSoup
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
+from langfuse import observe
+
+# Configure Langfuse via environment variables (already set in docker-compose)
+# os.environ["LANGFUSE_PUBLIC_KEY"] = "..."
+# os.environ["LANGFUSE_SECRET_KEY"] = "..."
+# os.environ["LANGFUSE_HOST"] = "..."
 
 
+@observe()
 async def process_url(url: str, doc_type: str) -> tuple[str, int]:
     """Download and process content from URL"""
     response = httpx.get(url)
     response.raise_for_status()
 
     if doc_type == "pdf":
-        with open("/tmp/temp.pdf", "wb") as f:
-            f.write(response.content)
-        doc = fitz.open("/tmp/temp.pdf")
-        content = "\n".join([page.get_text() for page in doc])
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
+            temp_file.write(response.content)
+            temp_file.flush()
+            doc = fitz.open(temp_file.name)
+            content = "\n".join([page.get_text() for page in doc])
+            doc.close()
+            os.unlink(temp_file.name)
     elif doc_type == "text":
         content = response.text
     elif doc_type == "html":
@@ -28,9 +41,12 @@ async def process_url(url: str, doc_type: str) -> tuple[str, int]:
         raise ValueError("Unsupported document_type for URL input")
 
     chunks_created = vectorize_text(content, doc_type)
+    
+    
     return content, chunks_created
 
 
+@observe()
 def process_text(content: str, doc_type: str) -> tuple[str, int]:
     """Process text content directly"""
     if doc_type == "markdown":
@@ -44,9 +60,12 @@ def process_text(content: str, doc_type: str) -> tuple[str, int]:
         raise ValueError("Unsupported document_type for text input")
 
     chunks_created = vectorize_text(processed_content, doc_type)
+    
+    
     return processed_content, chunks_created
 
 
+@observe()
 def convert_text(content: str, doc_type: str) -> str:
     """Convert text based on document type"""
     if doc_type in ["text", "pdf"]:
@@ -60,6 +79,7 @@ def convert_text(content: str, doc_type: str) -> str:
         raise ValueError(f"Unsupported document_type: {doc_type}")
 
 
+@observe()
 def vectorize_text(content: str, doc_type: str) -> int:
     """Receives text and process it into vector DB"""
     raw_text = convert_text(content, doc_type)
