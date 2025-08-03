@@ -10,11 +10,6 @@ from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langfuse import observe
 
-# Configure Langfuse via environment variables (already set in docker-compose)
-# os.environ["LANGFUSE_PUBLIC_KEY"] = "..."
-# os.environ["LANGFUSE_SECRET_KEY"] = "..."
-# os.environ["LANGFUSE_HOST"] = "..."
-
 
 @observe()
 async def process_url(url: str, doc_type: str) -> tuple[str, int]:
@@ -41,8 +36,7 @@ async def process_url(url: str, doc_type: str) -> tuple[str, int]:
         raise ValueError("Unsupported document_type for URL input")
 
     chunks_created = vectorize_text(content, doc_type)
-    
-    
+
     return content, chunks_created
 
 
@@ -60,8 +54,7 @@ def process_text(content: str, doc_type: str) -> tuple[str, int]:
         raise ValueError("Unsupported document_type for text input")
 
     chunks_created = vectorize_text(processed_content, doc_type)
-    
-    
+
     return processed_content, chunks_created
 
 
