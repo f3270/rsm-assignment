@@ -168,7 +168,7 @@ services:
         - OPENAI_API_KEY=${OPENAI_API_KEY}
         - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
         - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
-        - LANGFUSE_HOST=http://studio:3000
+        - LANGFUSE_HOST=http://langfuse-web:3000
       depends_on:
         - langfuse-web
 
