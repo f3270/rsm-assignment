@@ -110,3 +110,33 @@ The system uses environment variables defined in `docker-compose.yml`. Key confi
 - To implement observability with Langfuse, use the following documentation:
   + https://langfuse.com/docs/observability/sdk/python/sdk-v3
   + According to the official site, use the `@observe` decorator for tracing
+
+## Langfuse Configuration Details
+- Langfuse requires both client initialization and environment configuration
+- Steps for Langfuse setup:
+  + Set environment variables for Langfuse credentials
+    ```python
+    import os
+
+    os.environ["LANGFUSE_PUBLIC_KEY"] = "pk-lf-..."
+    os.environ["LANGFUSE_SECRET_KEY"] = "sk-lf-..."
+    os.environ["LANGFUSE_HOST"] = "http://localhost:3000"
+    ```
+  + Use `@observe` decorator for function tracing
+    ```python
+    from langfuse.decorators import observe
+
+    @observe()
+    def vectorize_text(content: str, doc_type: str) -> int:
+        # function implementation
+        pass
+    ```
+  + In short-lived environments, call `flush()` to ensure event collection
+    ```python
+    from langfuse.decorators import langfuse_context
+
+    langfuse_context.flush()
+    ```
+
+## Memory Notes
+- Remember that in Langfuse we are using SDK v3
