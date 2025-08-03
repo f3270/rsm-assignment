@@ -49,24 +49,6 @@ OPENAI_API_KEY=your_openai_api_key_here
 # Langfuse Configuration (for RAG service observability)
 LANGFUSE_PUBLIC_KEY=pk-lf-your_public_key
 LANGFUSE_SECRET_KEY=sk-lf-your_secret_key
-LANGFUSE_HOST=http://langfuse-web:3000
-
-# Database Configuration (automatically set in docker-compose)
-DATABASE_URL=postgresql://langfuse:password@langfuse-db:5432/langfuse
-CLICKHOUSE_URL=http://langfuse-clickhouse:8123
-REDIS_HOST=langfuse-redis
-REDIS_PORT=6379
-
-# Storage Configuration
-CHROMA_DB_DIR=/app/vector_store
-S3_ENDPOINT=http://langfuse-minio:9000
-S3_ACCESS_KEY_ID=minioadmin
-S3_SECRET_ACCESS_KEY=minioadmin
-S3_BUCKET_NAME=langfuse
-
-# Development Credentials (CHANGE FOR PRODUCTION)
-LANGFUSE_INIT_USER_EMAIL=demo@langfuse.com
-LANGFUSE_INIT_USER_PASSWORD=password
 ```
 
 ### Docker Environment Variables
@@ -89,38 +71,6 @@ Build and start all services including Langfuse and RAG microservice:
 
 # Alternative command
 docker compose up --build
-```
-
-### Option 2: Development Mode
-
-For development with live reloading:
-
-```bash
-# Start infrastructure services first
-docker compose up -d langfuse-db langfuse-clickhouse langfuse-redis langfuse-minio
-
-# Run Langfuse locally
-cd langfuse/
-pnpm install
-pnpm run dev:web
-
-# Run RAG service locally (in another terminal)
-cd rag_microservice/
-./run_fastapi.sh
-```
-
-### Option 3: Individual Services
-
-```bash
-# RAG Microservice only
-cd rag_microservice/
-./docker_build.sh               # Build Docker image
-./docker_run.sh                 # Run containerized version
-
-# Langfuse only
-cd langfuse/
-pnpm run infra:dev:up           # Start dependencies
-pnpm run dev:web                # Web app (port 3000)
 ```
 
 ## Service Endpoints
@@ -324,33 +274,9 @@ docker compose exec langfuse-clickhouse clickhouse-client
 docker compose exec langfuse-redis redis-cli
 ```
 
-## Troubleshooting
-
-### Common Issues
-
-1. **Import Errors**: Ensure `PYTHONPATH=/app/src` is set in Docker environment
-2. **Langfuse Connection**: Verify `LANGFUSE_HOST` points to `langfuse-web:3000` (not `studio:3000`)
-3. **Vector Store Persistence**: Check that `chroma_vector_store` volume is properly mounted
-4. **OpenAI API**: Ensure `OPENAI_API_KEY` is set and valid
-5. **Duplicate Detection**: ChromaDB automatically persists data - no manual `.persist()` needed
-
-### Logs and Debugging
-
-```bash
-# Check service status
-docker compose ps
-
-# View specific service logs
-docker compose logs -f rag-api
-docker compose logs -f langfuse-web
-
-# Check vector store
-docker volume inspect rsm_chroma_vector_store
-```
-
 ## Development Notes
 
-- **RAG Service**: Uses `uv` for Python package management
+- **RAG Service**: Uses `uv` for Python package management for development and pip for building app.
 - **Langfuse**: Uses pnpm for Node.js dependencies  
 - **Hot Reload**: Available in development mode for both services
 - **Environment**: Default credentials provided for development (change for production)
