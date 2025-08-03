@@ -168,7 +168,10 @@ services:
         - OPENAI_API_KEY=${OPENAI_API_KEY}
         - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
         - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
-        - LANGFUSE_HOST=http://langfuse-web:3000
+        - LANGFUSE_HOST=${LANGFUSE_HOST}
+        - CHROMA_DB_DIR=${CHROMA_DB_DIR}
+      volumes:
+        - chroma_vector_store:/app/vector_store
       depends_on:
         - langfuse-web
 
@@ -180,4 +183,6 @@ volumes:
   langfuse_clickhouse_logs:
     driver: local
   langfuse_minio_data:
+    driver: local
+  chroma_vector_store:
     driver: local

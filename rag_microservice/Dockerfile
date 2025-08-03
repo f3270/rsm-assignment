@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y
 
 # Crea el directorio de trabajo
 WORKDIR /app
+RUN mkdir -p /app/vector_store && chown -R 1000:1000 /app/vector_store
 
 # Copia los archivos necesarios
 COPY requirements.txt ./
