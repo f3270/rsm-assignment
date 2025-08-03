@@ -15,5 +15,8 @@ COPY src ./src
 # Expone el puerto de FastAPI
 EXPOSE 8000
 
+# Agrega el directorio src al PYTHONPATH para que encuentre los módulos
+ENV PYTHONPATH=/app/src
+
 # Ejecuta la app
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
