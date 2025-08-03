@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, HttpUrl
 
 from ingest import process_text, process_url
+from query import query_vectordb
 
 app = FastAPI()
 
@@ -88,5 +89,17 @@ async def ingest_document(request: IngestRequest):
 
 @app.post("/query", response_model=QueryResponse)
 def query_documents(request: QueryRequest):
-    # TODO: Implement query logic
-    return QueryResponse(answer="This is a placeholder answer", sources=[])
+    """Query documents using RAG (Retrieval-Augmented Generation)"""
+    try:
+        answer, sources_data = query_vectordb(request.question)
+        
+        # Convert sources data to Source objects
+        sources = [Source(page=src["page"], text=src["text"]) for src in sources_data]
+        
+        return QueryResponse(answer=answer, sources=sources)
+    except Exception as e:
+        # Return error as a query response
+        return QueryResponse(
+            answer=f"Error processing query: {str(e)}", 
+            sources=[]
+        )
