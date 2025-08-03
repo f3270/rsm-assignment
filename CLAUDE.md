@@ -105,3 +105,8 @@ The system uses environment variables defined in `docker-compose.yml`. Key confi
 - The RAG service builds from a Python 3.11-slim base image
 - Langfuse uses pre-built images from Docker Hub
 - Volumes are used for data persistence across container restarts
+
+## Observability Notes
+- To implement observability with Langfuse, use the following documentation:
+  + https://langfuse.com/docs/observability/sdk/python/sdk-v3
+  + According to the official site, use the `@observe` decorator for tracing
